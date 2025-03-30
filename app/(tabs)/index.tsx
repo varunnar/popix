@@ -1,56 +1,58 @@
 import { Image, StyleSheet, Platform } from 'react-native';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import Swiper from 'react-native-deck-swiper';
+
+// import { HelloWave } from '@/components/HelloWave';
+// import ParallaxScrollView from '@/components/ParallaxScrollView';
+// import { ThemedText } from '@/components/ThemedText';
+// import { ThemedView } from '@/components/ThemedView';
 
 export default function HomeScreen() {
+
+  const newData = [
+    {
+      "title": "The Cosmic Chase",
+      "screen": 1,
+      "format": "IMAX 3D",
+      "showtimes": ["12:00 PM", "3:30 PM", "7:00 PM", "10:15 PM"],
+      "duration": "2h 20m",
+      "genre": ["Sci-Fi", "Action"],
+      "rating": "PG-13"
+    },
+    {
+      "title": "Love & Lattes",
+      "screen": 2,
+      "format": "Standard",
+      "showtimes": ["11:15 AM", "2:45 PM", "6:30 PM", "9:00 PM"],
+      "duration": "1h 50m",
+      "genre": ["Romance"],
+      "rating": "PG"
+    },
+    {
+      "title": "Nightfall Terror",
+      "screen": 3,
+      "format": "Standard",
+      "showtimes": ["1:00 PM", "4:30 PM", "8:00 PM", "11:15 PM"],
+      "duration": "2h 10m",
+      "genre": ["Horror"],
+      "rating": "R"
+    },
+    {
+      "title": "The Grand Heist",
+      "screen": 4,
+      "format": "IMAX",
+      "showtimes": ["12:45 PM", "4:15 PM", "7:45 PM", "11:00 PM"],
+      "duration": "2h 30m",
+      "genre": ["Action", "Thriller"],
+      "rating": "PG-13"
+    }
+  ]
+  
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <div className="container">
+      
+    </div>
   );
 }
 
