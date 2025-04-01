@@ -1,145 +1,159 @@
+/*
+Creator: Varun Narayanswamy
+Date: 03/26/2025
+Overview: Displays movie details such as image, rating, picture and more. Collects data from TMDB api and MovieGlu
+*/
 import React, { useEffect, useState } from "react";
 import { ImageBackground, ScrollView, TouchableOpacity } from "react-native";
-import {View, Text, StyleSheet, Dimensions} from "react-native";
+import {View, Text, inspectedMovieStylesheet, Dimensions} from "react-native";
 import MovieTimeBubble from "./components/movieTimeBubble";
-import { useRoute } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
-import { Router } from "expo-router";
 import { useMovieStore } from "../store/index";
-//details/[id].tsx => /details/1 use something like this, the 1 is the localSearchParams
 
 export default function movieInspect() {
 
-    const navigation = useNavigation();
+  //navigation content
+  const navigation = useNavigation();
 
-    const initial_url="https://image.tmdb.org/t/p/original/";
-    const [movie, setMovie] = useState({});
-    const [description, setDescription] = useState("");
-    const [image, setImage] = useState("");
-    const [rating, setRating] = useState("");
+  const initial_url="https://image.tmdb.org/t/p/original/";
+  const [description, setDescription] = useState("");
+  const [image, setImage] = useState("");
+  const [rating, setRating] = useState("");
 
-    const route = useRoute()
-
-    const movieObject = useMovieStore(state => state.moviesData);
-    const pickedMovieId = useMovieStore(state => state.pickedMovie);
-    const movieItem = movieObject[pickedMovieId];
-
+  //Zustand
+  const movieObject = useMovieStore(state => state.moviesData);
+  const pickedMovieId = useMovieStore(state => state.pickedMovie);
+  const movieItem = movieObject[pickedMovieId];
 
 
+  //card color
+  const color_options = [
+    "rgba(176, 3, 3, 0.6)",
+    "rgba(255, 221, 89, 0.6)",  // Warm yellow
+    "rgba(0, 128, 255, 0.6)",   // Vibrant blue
+    "rgba(34, 177, 76, 0.6)",   // Strong green
+    "rgba(255, 127, 39, 0.6)",  // Orange
+    "rgba(163, 73, 164, 0.6)",  // Purple
+    "rgba(255, 201, 14, 0.6)",  // Golden yellow
+    "rgba(153, 217, 234, 0.6)", // Soft cyan
+    "rgba(185, 122, 87, 0.6)",  // Warm brown
+    "rgba(200, 191, 231, 0.6)", // Soft lavender
+    "rgba(112, 146, 190, 0.6)", // Muted blue
+    "rgba(181, 230, 29, 0.6)",  // Bright green
+    "rgba(255, 174, 201, 0.6)", // Soft pink
+    "rgba(195, 195, 195, 0.6)", // Neutral gray
+    "rgba(94, 60, 153, 0.6)",   // Deep purple
+    "rgba(255, 242, 0, 0.6)"    // Bright yellow
+  ];
 
-    const theMOVIEDB_api_search = async(title) => {
-      //console.log("RUNNING")
-      if (title == "" || title == null) {
-        return;
+
+
+  //Collecting data from TMDB
+  const theMOVIEDB_api_search = async(title) => {
+    if (title == "" || title == null) {
+      return;
+    }
+    try {
+      const converted = encodeURIComponent(title.toLowerCase()).replace(/'/g, "%27");;
+      const url = `https://api.themoviedb.org/3/search/movie?query=${converted}&include_adult=false&language=en-US&page=1&year=2025`;
+      const headers =  {
+        accept: 'application/json',
+        Authorization: `Bearer ${process.env.EXPO_PUBLIC_READ_TOKEN}`
       }
-      try {
-        const converted = encodeURIComponent(title.toLowerCase()).replace(/'/g, "%27");;
-        const url = `https://api.themoviedb.org/3/search/movie?query=${converted}&include_adult=false&language=en-US&page=1&year=2025`;
 
-        //console.log("url", url);
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: headers
+      });
 
-        const headers =  {
-          accept: 'application/json',
-          Authorization: `Bearer ${process.env.EXPO_PUBLIC_READ_TOKEN}`
-        }
-
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: headers
-        });
-
-        if (response == null) {
-          console.log("Failed to collect additional movie data");
-          return
-        }
-
-
-      const data = await response.json();
-
-      if (data.success == false) {
+      if (response == null) {
+        console.log("Failed to collect additional movie data");
         return
       }
-      if (data && data.results && data.results[0]) {
-        const url = initial_url+data.results[0].poster_path
-        //console.log("data", data.results[0]);
-        //setMovie(data[0]);
-        setImage(url);
-        setDescription(data.results[0].overview);
-        setRating(data.results[0].vote_average);
-      }
-      } catch(err) {
-        console.log("catch errors in usage", err);
-      }
+
+
+    const data = await response.json();
+
+    if (data.success == false) {
+      return
     }
-
-    useEffect(()=> {
-      theMOVIEDB_api_search(movieItem.title);
-    }), [movieItem]
-
-    // const params = useLocalSearchParams();
-    //console.log("movie time", movieItem);
-
-    const navigateBack = () => {
-        navigation.goBack();
+    if (data && data.results && data.results[0]) {
+      const url = initial_url+data.results[0].poster_path
+      setImage(url);
+      setDescription(data.results[0].overview);
+      setRating(data.results[0].vote_average);
     }
+    } catch(err) {
+      console.log("catch errors in usage", err);
+    }
+  }
+
+  //begin search for API on mount once movieItem is found
+  useEffect(()=> {
+    theMOVIEDB_api_search(movieItem.title);
+  }), [movieItem]
+
+
+  //back button
+  const navigateBack = () => {
+      navigation.goBack();
+  }
 
     return (
-        <ScrollView style={[styles.container]} contentContainerStyle={styles.content}>
+        <ScrollView style={[inspectedMovieStyles.container]} contentContainerStyle={inspectedMovieStyles.scrollViewInternalContent}>
             <View>
               {image && 
-                (<ImageBackground source={{uri: image}} resizeMode="contain" style={styles.headerSection} imageStyle={{opacity: 1 }} onError={(error)=>(console.log("EEROR FOUND ", error))}>
-                    <View style={styles.topOptions}>
-                        <Text style={styles.titleText}>{movieItem.title}</Text>
-                        <TouchableOpacity style={styles.buttonContainer} onPress={navigateBack}>
-                        <Text style={styles.closeButton} onPress={navigateBack}>X</Text>
+                (<ImageBackground source={{uri: image}} resizeMode="contain" style={[inspectedMovieStyles.headerSection, {backgroundColor: color_options[pickedMovieId],}]} imageStyle={{opacity: 1 }} onError={(error)=>(console.log("EEROR FOUND ", error))}>
+                    <View style={inspectedMovieStyles.topOptions}>
+                        <Text style={inspectedMovieStyles.titleText}>{movieItem.title}</Text>
+                        <TouchableOpacity style={inspectedMovieStyles.buttonContainer} onPress={navigateBack}>
+                        <Text style={inspectedMovieStyles.closeButton} onPress={navigateBack}>X</Text>
                         </TouchableOpacity>
                     </View>
                 </ImageBackground>)
               }
             </View>
-            <View style={{padding: 10, gap: 10}}>
+            <View style={inspectedMovieStyles.movieTextContent}>
             {
               description && (
                 <>
-                <Text style={styles.subHeader}>{"Description:"}</Text>
-                <Text style={styles.baseText}>{description}</Text>
+                <Text style={inspectedMovieStyles.subHeader}>{"Description:"}</Text>
+                <Text style={inspectedMovieStyles.baseText}>{description}</Text>
                 </>
               )
             }
             {
               rating && (
                 <>
-                <Text style={styles.subHeader}>Rating</Text>
-                <Text style={styles.baseText}>{rating}</Text>
+                <Text style={inspectedMovieStyles.subHeader}>Rating</Text>
+                <Text style={inspectedMovieStyles.baseText}>{rating}</Text>
                 </>
               )
             }
-            <Text style={styles.subHeader}>{"Format: "}</Text>
-            <Text style={styles.baseText}>{movieItem.format}</Text>
-            <Text style={styles.subHeader}>{"ShowTimes"}</Text>
-            <View style={styles.timeListings}>
+            <Text style={inspectedMovieStyles.subHeader}>{"Format: "}</Text>
+            <Text style={inspectedMovieStyles.baseText}>{movieItem.format}</Text>
+            <Text style={inspectedMovieStyles.subHeader}>{"ShowTimes"}</Text>
+            <View style={inspectedMovieStyles.timeListings}>
                 {movieItem.showtimes && movieItem.showtimes.map((showtime, index) => {
                     return (
                     <MovieTimeBubble key={index} time={showtime.start_time}></MovieTimeBubble>
                     )})
                 }
             </View>
-            <Text style={styles.subHeader}>{"Rating: " + movieItem.ageRating}</Text>
+            <Text style={inspectedMovieStyles.subHeader}>{"Age Rating: " + movieItem.ageRating}</Text>
             </View>
         </ScrollView>
     )
 }
 
-const styles = StyleSheet.create({
+const inspectedMovieStyles = inspectedMovieStylesheet.create({
     container: {
       backgroundColor: "#FFFFFF",
       width: "100%",
       overflow: "hidden",
     },
 
-    content: {
-        // alignItems: "flex-start",
-        //justifyContent: "center",
+    scrollViewInternalContent: {
         width: "100%",
         gap: 10
     },
@@ -147,7 +161,6 @@ const styles = StyleSheet.create({
     headerSection: {
       width: "100%",
       height: Dimensions.get('screen').height * .4,
-      backgroundColor: "rgba(176, 3, 3, 0.46)",
    },
 
    buttonContainer: {
@@ -177,14 +190,6 @@ const styles = StyleSheet.create({
       width: "100%",
       flexDirection: "row"
     },
-
-    expandedView: {
-      shadowOffset: {width: 0, height: 0},
-      width: "100%",
-      height: "100%",
-      position: "fixed",
-      zIndex: 1000
-    },
     subHeader: {
         fontFamily: 'dm-sans',
         fontSize: 20,
@@ -206,4 +211,10 @@ const styles = StyleSheet.create({
       paddingBottom: 3,
       alignSelf: 'flex-start'
     },
+
+    movieTextContent: {
+      padding: 10,
+      marginBottom: 20,
+      gap: 10
+    }
   });

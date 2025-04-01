@@ -1,5 +1,10 @@
-import React, { useRef, useState } from "react";
-import { Button, Pressable, StyleSheet, Text} from "react-native";
+/*
+Creator: Varun Narayanswamy
+Date: 03/26/2025
+Overview: Button used for selecting times on movie inspect page - eventually would lead to ticket buying page
+*/
+import React, { useState } from "react";
+import { Pressable, StyleSheet, Text} from "react-native";
 import { View } from "react-native";
 
 
@@ -10,8 +15,6 @@ export default function MovieTimeBubble({time}) {
     const timeSelected = function() {
         set_selected(!selected);
     }
-    
-   //const timeRef = useRef<TouchableOpacity>(null);
 
     return (
         <View>
@@ -20,7 +23,7 @@ export default function MovieTimeBubble({time}) {
                 buttonStyle.buttonSty, {backgroundColor: selected ? "#000033" : "#FFFFFF"}
             ]}
             onPress={timeSelected}>
-                <Text className="timeObject" style={{color: selected ? "#FFFFFF" : "#000000"}}>{time}</Text>
+                <Text className="timeObject" style={[buttonStyle.buttonFont, {color: selected ? "#FFFFFF" : "#000000"}]}>{time}</Text>
             </Pressable>
         </View>
     )
@@ -38,6 +41,12 @@ const buttonStyle = StyleSheet.create({
         paddingTop: 2,
         paddingBottom: 2,
         paddingLeft: 5,
-        paddingRight: 5
+        paddingRight: 5,
+        minWidth: 50,
+        minHeight: 50
+    },
+    buttonFont: {
+        fontSize: 16,
+        margin: "auto"
     }
 }) 

@@ -1,4 +1,8 @@
-/* eslint import/prefer-default-export: off */
+/*
+Creator: Varun Narayanswamy
+Date: 03/26/2025
+Overview: Zustand store used to save local variables and share between files
+*/
 import {create} from "zustand";
 
 interface locationStore {
@@ -17,16 +21,16 @@ export const useLocationStore = create<locationStore>((set) => ({
 
 interface cinemasStore {
     cinemasData: object;
-    pickedCinema: string;
+    pickedCinema: number;
     setCinemasData: (newData: object) => void;
-    setCinemaString: (cinemaId: string) => void;
+    setCinemaNumber: (cinemaId: number) => void;
 }
 
 export const useCinemaStore = create<cinemasStore>((set) => ({
     cinemasData: {},
-    pickedCinema: "",
+    pickedCinema: NaN,
     setCinemasData: (newData) => set({cinemasData: newData}),
-    setCinemaString: (cinemaId) => set({pickedCinema: cinemaId})
+    setCinemaNumber: (cinemaId) => set({pickedCinema: cinemaId})
 }));
 
 interface movieStore {

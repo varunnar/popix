@@ -1,8 +1,12 @@
-import { StyleSheet, Animated, TouchableHighlight, TextInput, View, TouchableOpacity, Text, NativeSyntheticEvent, NativeScrollEvent, Dimensions } from "react-native";
+/*
+Creator: Varun Narayanswamy
+Date: 03/26/2025
+Overview: Displays movie theater locations based on user's location. Allows to click to reach more movie theaters
+*/
+import { StyleSheet, Animated, TouchableHighlight, View, NativeSyntheticEvent, NativeScrollEvent, Dimensions } from "react-native";
 import {useState, useEffect, useRef } from 'react';
 import CinemaCard from "./components/cinemaCard";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useSharedValue } from "react-native-reanimated";
 import { useNavigation } from "@react-navigation/native";
 import { useCinemaStore, useLocationStore } from "../store/index";
 
@@ -17,7 +21,7 @@ export default function Index() {
 
   const setCinemaStores = useCinemaStore((state => state.setCinemasData));
   const storedCinema = useCinemaStore((state => state.cinemasData));
-  const setCinemaPicked = useCinemaStore((state => state.setCinemaString));
+  const setCinemaPicked = useCinemaStore((state => state.setCinemaNumber));
 
 
   //Card movement animation
@@ -26,57 +30,16 @@ export default function Index() {
   const [currentCard, setCurrentCard] = useState(0)
   const scrollRef = useRef<Animated.FlatList>(null);
 
-  const [location, setLocation] = useState<Location.LocationObject | null>(null)
-
   const navigation = useNavigation();
 
-  const newData = [
-    {
-      "title": "The Cosmic Chase",
-      "screen": 1,
-      "format": "IMAX 3D",
-      "showtimes": ["12:00 PM", "3:30 PM", "7:00 PM", "10:15 PM"],
-      "duration": "2h 20m",
-      "genre": ["Sci-Fi", "Action"],
-      "rating": "PG-13"
-    },
-    {
-      "title": "Love & Lattes",
-      "screen": 2,
-      "format": "Standard",
-      "showtimes": ["11:15 AM", "2:45 PM", "6:30 PM", "9:00 PM"],
-      "duration": "1h 50m",
-      "genre": ["Romance"],
-      "rating": "PG"
-    },
-    {
-      "title": "Nightfall Terror",
-      "screen": 3,
-      "format": "Standard",
-      "showtimes": ["1:00 PM", "4:30 PM", "8:00 PM", "11:15 PM"],
-      "duration": "2h 10m",
-      "genre": ["Horror"],
-      "rating": "R"
-    },
-    {
-      "title": "The Grand Heist",
-      "screen": 4,
-      "format": "IMAX",
-      "showtimes": ["12:45 PM", "4:15 PM", "7:45 PM", "11:00 PM"],
-      "duration": "2h 30m",
-      "genre": ["Action", "Thriller"],
-      "rating": "PG-13"
-    }
-  ];
-
-  // const [search_value, set_search_value] = useState("");
+  //Used to avoid unnecessary API calls
   const [hasFetched, setHasFetched] = useState(false);
 
+  //cinema data displayed
   const [base_cinema_data, set_base_cinema_data] = useState(null);
 
 
-  //Movie theater times
-
+  //Movie theater times sample
   const movie_theater_sample = {
     "cinemas": [
         {
@@ -106,10 +69,38 @@ export default function Index() {
             "lng": -105.130898,
             "distance": 9.4557382872468,
             "logo_url": "https://assets.movieglu.com/chain_logos/us/UK-124-sq.jpg"
-        }
+        },
+        {
+          "cinema_id": 47632,
+          "cinema_name": "Dairy Arts Center",
+          "address": "2590 Flatiron Crossing 14",
+          "address2": "",
+          "city": "Boulder",
+          "state": "CO",
+          "county": "Boulder",
+          "postcode": 80021,
+          "lat": 39.929699,
+          "lng": -105.130898,
+          "distance": 9.4557382872468,
+          "logo_url": "https://assets.movieglu.com/chain_logos/us/UK-124-sq.jpg"
+      },
+      {
+        "cinema_id": 86021,
+        "cinema_name": "AMC Westminister Promenade 24",
+        "address": "10655 Westminster Blvd",
+        "address2": "",
+        "city": "Westminister",
+        "state": "CO",
+        "county": "Westminister",
+        "postcode": 80020,
+        "lat": 39.929699,
+        "lng": -105.130898,
+        "distance": 9.4557382872468,
+        "logo_url": "https://assets.movieglu.com/chain_logos/us/UK-124-sq.jpg"
+    }
     ],
     "status": {
-        "count": 2,
+        "count": 4,
         "state": "OK",
         "method": "cinemasNearby",
         "message": null,
@@ -122,12 +113,18 @@ export default function Index() {
 }
 
 
+  //inspect cinema and navigate toward it
   const cinemaClicked = (cinema) => {
-    setCinemaPicked(cinema)
+    if (cinema.cinema_id) {
+    setCinemaPicked(cinema.cinema_id);
     navigation.navigate('pickMovie')
+    } else {
+      console.log("ERROR - UNABLE TO NAVIGATE DUE TO LACK CINEMA_ID")
+    }
   }
 
 
+  //get users current location
   const getCurrentLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
@@ -137,11 +134,14 @@ export default function Index() {
     }
 
     let loc = await Location.getCurrentPositionAsync({});
-    setlocationStore(loc.coords);
+    if (loc.coords) {
+      setlocationStore(loc.coords);
+    } else {
+      console.log('ERROR - unable to find location coordinates with location object, ', loc);
+    }
   }
 
-  //scrollview data
-
+  //API call to collect cinema data
   const fetchCinemaOptions = async() => {
     try {
       if (!getlong || !getlat || hasFetched) {
@@ -164,7 +164,6 @@ export default function Index() {
         set_base_cinema_data(movie_theater_sample);
 
         // const response = await fetch('https://api-gate2.movieglu.com/cinemasNearby/n=10', {
-        //   mode: 'no-cors',
         //   method: 'GET',
         //   headers: header_vals
         // });
@@ -180,45 +179,40 @@ export default function Index() {
     }
   }
 
+  //scrolling animation
   const snapScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const offsetX = event.nativeEvent.contentOffset.x;
     const index = Math.round(offsetX/cardWidth);
 
     if (Math.abs(offsetX - index*cardWidth) < jumpThreshold*cardWidth ) {
-      if (index != currentCard) {
+      if (index != currentCard && index<base_cinema_data.cinemas.length) {
         setCurrentCard(index);
         scrollRef.current?.scrollToIndex({index, animated: true});
       }
     }
   };
 
+  //on mount collect user's current location
   useEffect(()=> {
     getCurrentLocation();
   }, []);
 
+  //once location is collected cinema data
   useEffect(() => {
     //fetchAPIData()
     fetchCinemaOptions()
   }, [getlong, getlat])
-  
-  // const [scroll_view_width, set_scroll_view_width] = useState(0);
-
-//  const current_position = useSharedValue(0);
-
-  const setSearch = (searchVal: string) => {
-    set_search_value(searchVal);
-  }
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: "#000000"}}>
       <View>
-      { base_cinema_data && 
+      { base_cinema_data && base_cinema_data.cinemas &&
       (<Animated.FlatList
         ref={scrollRef}
-        style={mainStyles.scrollBarContainer}
+        style={cinemasStyles.scrollBarContainer}
         data={base_cinema_data.cinemas}
         horizontal={true}
-        contentContainerStyle={mainStyles.itemStyle}
+        contentContainerStyle={cinemasStyles.itemStyle}
         onScroll={snapScroll}
         renderItem={({item, index, separators}) => (
           <TouchableHighlight key={index}
@@ -235,21 +229,7 @@ export default function Index() {
   );
 }
 
-const mainStyles = StyleSheet.create({
-  searchBar: {
-    marginLeft: "auto",
-    marginRight: "auto",
-    borderRadius: 20,
-    backgroundColor: "#CCCCCC",
-    width: "95%",
-    marginTop: 10,
-    marginBottom: 10,
-    paddingLeft: 10,
-    paddingTop: 3,
-    paddingBottom: 3,
-    color: "#000000"
-  },
-
+const cinemasStyles = StyleSheet.create({
   scrollBarContainer: {
     marginTop: "auto",
     marginBottom: "auto",

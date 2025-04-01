@@ -1,29 +1,38 @@
 import React, { useState } from "react";
-import { ImageBackground, TouchableOpacity } from "react-native";
+import { ImageBackground, Pressable } from "react-native";
 import {View, Text, StyleSheet, Dimensions} from "react-native";
-import FastImage from 'react-native-fast-image';
 
 
 export default function MovieCard({cardClicked, movieContent, opacityColor}) {
 
-    return (
-          <View style={[styles.container]}>
-              <View>
-                <TouchableOpacity onPress={() => cardClicked(movieContent.index)}>
-                  {/* <FastImage source={{uri: movieContent.image}} style={{ width: 100, height: 100 }} */}
-                  <ImageBackground source={{uri: movieContent.image}} resizeMode="cover" style={[styles.headerSection, {backgroundColor: opacityColor}]} imageStyle={{opacity: 0.6}} onError={(error) => console.log("Image loading error:", error)}>
-                    <View style={{width: "100%", height: "100%", padding: 10, flexDirection: "row", justifyContent: "space-between"}}>
-                    <Text style={styles.titleText}>{movieContent.title}</Text>
-                    <Text style={styles.titleText}>{movieContent.ageRating}</Text>
-                    </View>
-                  </ImageBackground>
-              </TouchableOpacity>
+  const [imageOpacity, setImageOpacity] = useState(0.6);
+
+  const clearBackgroundColor = () => {
+    setImageOpacity(1);
+  }
+
+  const resetBackgroundColor = () => {
+    setImageOpacity(0.6)
+  }
+
+  return (
+    <View style={[movieCardStyles.container]}>
+        <View>
+          <Pressable onPress={() => cardClicked(movieContent.index)} onPressIn={() => clearBackgroundColor()} onPressOut={() => resetBackgroundColor()}>
+            {/* <FastImage source={{uri: movieContent.image}} style={{ width: 100, height: 100 }} */}
+            <ImageBackground source={{uri: movieContent.image}} resizeMode="cover" style={[movieCardStyles.headerSection, {backgroundColor: opacityColor}]} imageStyle={{opacity: imageOpacity}} onError={(error) => console.log("Image loading error:", error)}>
+              <View style={movieCardStyles.movieCardTextContainer}>
+              <Text style={movieCardStyles.titleText}>{movieContent.title}</Text>
+              <Text style={movieCardStyles.titleText}>{movieContent.ageRating}</Text>
               </View>
-          </View>
-    )
+            </ImageBackground>
+        </Pressable>
+        </View>
+    </View>
+  )
 };
 
-const styles = StyleSheet.create({
+const movieCardStyles = StyleSheet.create({
     container: {
       backgroundColor: "#FFFFFF",
       marginLeft: Dimensions.get('screen').width * 0.05,
@@ -42,8 +51,6 @@ const styles = StyleSheet.create({
     headerSection: {
       width: "100%",
       height: Dimensions.get('screen').width * 1.3,
-      // backgroundColor: "rgba(176, 3, 3, 0.9)",
-      //padding: 10
     },
     
     titleText: {
@@ -56,6 +63,16 @@ const styles = StyleSheet.create({
       paddingRight: 10,
       paddingTop: 3,
       paddingBottom: 3,
-      alignSelf: 'flex-start'
+      alignSelf: 'flex-start',
+      maxWidth: "70%"
     },
+
+    movieCardTextContainer: {
+      maxWidth: "100%",
+      height: "100%",
+      padding: 10,
+      flexDirection: "row",
+      justifyContent: "space-between",
+      gap: 20
+    }
   });

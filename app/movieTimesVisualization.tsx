@@ -1,3 +1,8 @@
+/*
+Creator: Varun Narayanswamy
+Date: 03/26/2025
+Overview: Displays Visualization of movie times in Gantt graph format. Uses scrolling to display full functionality and click function to navigate to pages
+*/
 import React, { useEffect, useRef, useState } from "react";
 import { View, Dimensions, ScrollView, Text } from "react-native";
 import { useRoute, useNavigation} from "@react-navigation/native";
@@ -9,34 +14,36 @@ import * as d3 from "d3";
 export default function MovieTimesVisualization() {
 
 
-    //ZUSTAND
+    //ZUSTAND movie ID
     const pickMovieId = useMovieStore(state => state.setPickedMovieData);
 
+    //used to get knowledge of safe area size
     const insets = useSafeAreaInsets();
     const height_with_insets = Dimensions.get('screen').height - insets.bottom - insets.top;
 
-    const vizRef = useRef()
-
+    //used to navgiate
     const navigation = useNavigation();
 
+    //route params
     const route = useRoute();
-
     const { movieTimeData } = route.params;
 
+    //use states
     const [elementData, setElementData] = useState([]);
     const [xTicks, setXTicks] = useState([]);
     const [yTicks, setYTicks] = useState([])
 
+    //widths and heights used in visualization
     const numberOfElements = movieTimeData.movieTimes.length;
     const width = 1200; 
     const height = numberOfElements * 80;
     const marginTop = 30;
     const marginBottom = 20;
-    const viewableHeight = height-marginTop-marginBottom;
-    const marginLeft = 30;
-    const marginRight = 30;
+    const marginLeft = 10;
+    const marginRight = 10;
     const axis_height = height_with_insets - marginBottom;
     
+    //color values
     const color_options = [
         "rgba(176, 3, 3, 0.6)",
         "rgba(255, 221, 89, 0.6)",  // Warm yellow
@@ -75,19 +82,7 @@ export default function MovieTimesVisualization() {
         "rgba(255, 242, 0, 1)"    // Bright yellow
       ]
 
-
-    const findNumberofDays = (day1, day2) => {
-        const utc1 = Date.UTC(day1.getFullYear(), day1.getMonth(), day1.getDate());
-        const utc2 = Date.UTC(day2.getFullYear(), day2.getMonth(), day2.getDate());
-
-        const timeDif = 1000*60*60*24;
-
-        return Math.floor((utc2 - utc1)/timeDif);
-    }
-
     const goToMovie = (index) => {
-      console.log("GO TO MOVIE")
-      console.log(index);
       pickMovieId(index);
       navigation.navigate('movieInspect');
     };
@@ -95,29 +90,16 @@ export default function MovieTimesVisualization() {
     useEffect(() => {
         const timeParses = d3.timeParse("%Y-%m-%d");
 
-        const numberOfElements = movieTimeData.movieTimes.length;
-        // const minWidth = 600;
-        // const days_diff = findNumberofDays(timeParses(movieTimeData.earliest), timeParses(movieTimeData.latest));
-        // const computedWidth = d3.max(movieTimeData.movieTimes, (d) => d.title.length * );
-        // const width = Math.max(minWidth, computedWidth*days_diff);
-        
-        // const height = Dimensions.get('screen').height*.77;
-        // const marginTop = 20;
-        // const marginBottom = 20;
-        const viewableWidth = width-marginLeft-marginRight;
         const boxHeight= 70;
-        const gap = viewableHeight/numberOfElements * .1;
+        const gap = height/numberOfElements * .1;
     
-
-        //console.log(days_diff);
-        // const computedLargestRange = timeParses(movieTimeData.latest).getDate() - timeParses().getDate();
-        // console.log("ccc", computedLargestRange);
-        
+        //Set scales
         const xScale = d3.scaleTime()
             .domain([timeParses(movieTimeData.earliest), timeParses(movieTimeData.latest)])
-            .range([0, width])
-            //.range([marginLeft, width-marginRight])
+            .range([marginLeft, width+marginRight])
 
+
+        //set ticks for grid
         const x_Ticks = xScale.ticks().map((d) => ({
             value: d3.timeFormat("%b %d")(d), // Format date
             x: xScale(d)
@@ -128,7 +110,7 @@ export default function MovieTimesVisualization() {
         setXTicks(x_Ticks);
         setYTicks(y_Ticks)
             
-        
+        //setup data for Gantt graph
         const formattedData = movieTimeData.movieTimes.map((movie, i) => {
             const title = movie.title;
             const start_box = xScale(timeParses(movie.earliest_date));
@@ -140,61 +122,18 @@ export default function MovieTimesVisualization() {
             const index = i;
         
             return {
-            index,
-            title,
-            start_box,
-            end_box,
-            end,
-            y,
-            height,
-            link
+              index,
+              title,
+              start_box,
+              end_box,
+              end,
+              y,
+              height,
+              link
             }
         });
         
         setElementData(formattedData);
-
-        // //AXIS
-        // svg.append("g")
-        // .attr("transform", `translate(0,${height - marginBottom})`)
-        // .call(d3.axisBottom(xScale).tickSizeOuter(0));
-
-        //TEXT AND RECTANGLE GROUP
-        // const group = svg.selectAll(".movie-group")
-        //     .data(elementData)
-        //     .join("g")
-        //     .attr("transform", (d) => `translate(0, ${d.y})`)
-        //     .on("touchstart", (event, d) => {
-        //         const [mx, my] = d3.pointer(event);
-        //         console.log("mx", d3.pointer(event));
-        //         tooltip
-        //             .attr("x", mx)
-        //             .attr("y", my)
-        //             .text(d.title)
-
-        //     })
-        //     .on("touchend", () => {
-        //         tooltip.text("");
-        //     })
-
-        
-        // group.append("rect")
-        //     .attr("x", (d) => d.start_box)
-        //     .attr("y", (d)=> 0)
-        //     .attr('rx', (d) => d.height / 2)
-        //     .attr('ry', (d) => d.height / 2)
-        //     .attr("width", (d) => d.end)
-        //     .attr("height", (d) => d.height)
-
-        // group.append("SvgText")
-        //     .attr("fill", "white")
-        //     .attr("x", (d) => d.start_box + 5) // Add padding inside the bar
-        //     .attr("y", (d) => (d.height / 2)) // Center text vertically
-        //     .attr("dy", "0.35em") // Adjust baseline alignment
-        //     .style("font-size", "16px") // Optional: Adjust text size .style("font-size", (d) => Math.min(12, d.end / d.title.length) + "px")
-        //     .text((d) => {
-        //         const maxChar = Math.floor(d.end/9);
-        //         return d.title.length > maxChar ? d.title.slice(0, maxChar) + "..." : d.title
-        //     });
         
     }, [movieTimeData]);
 
@@ -203,21 +142,7 @@ export default function MovieTimesVisualization() {
     }
 
     return(
-        // <View style={{flex: 1}}>
-        // <View style={{marginBottom: 20}}>
-        //     <Text style={{textAlign: "center", fontSize: 24, fontWeight: "bold"}}>Vizualization Graph</Text>
-        // </View>
-        // <ScrollView style={{flex: 1, backgroundColor: "#aaaaaa", width: 600}}
-        // horizontal={true}>
-        // <Svg ref={vizRef}></Svg>
-        // </ScrollView>
-        // </View>
         <View style={{ flex: 1, backgroundColor: "#000000" }}>
-            <View style={{ marginBottom: 10, marginTop: 10 }}>
-                <Text style={{ textAlign: "center", fontSize: 24, fontWeight: "bold", color: "#FFFFFF" }}>
-                    Visualization Graph
-                </Text>
-            </View>
             <ScrollView
                 style={{ flex: 1, backgroundColor: "#000000", width: "100%" }}
                 horizontal={true}
@@ -226,7 +151,7 @@ export default function MovieTimesVisualization() {
             >
             <ScrollView contentContainerStyle={{height: height+20}}>
               <Svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
-
+                    {/* X-Axis Grid Lines */}
                     {xTicks.map((tick, index) => (
                         <Line
                             key={`x-grid-${index}`}
@@ -250,7 +175,6 @@ export default function MovieTimesVisualization() {
                         <G key={index}>
 
                             <Rect
-                                // href={{uri: d.link}}
                                 key={d.title}
                                 x={d.start_box}
                                 y={d.y}
@@ -262,7 +186,6 @@ export default function MovieTimesVisualization() {
                                 strokeWidth={3}
                                 stroke={border_options[d.index]}
                                 onPress={() => goToMovie(d.index)}
-                                // onPress={(event) => handlePress(d, event)}
                             />
                             <SvgText
                                 x={d.start_box + 5}
