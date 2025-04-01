@@ -9,5 +9,17 @@ Popix uses the react-native, a mobile version of the react framework, as well as
 
 # API
 
-Popix uses the movieGLU API to collect information about local movie theaters, and also uses the The Movie DB (TMDB) API which provides addition information on the movies, such as rating, descriptions and images
+Popix uses the movieGLU API to collect information about local movie theaters, and also uses the The Movie DB (TMDB) API which provides addition information on the movies, such as rating, descriptions and images.
 
+# Screens
+Currently running movies
+<img width="445" alt="Screenshot 2025-04-01 at 4 04 46 PM" src="https://github.com/user-attachments/assets/ee07a2bc-9a3f-48bc-880e-0f8598196c8c" />
+
+Further Details on Movies
+<img width="445" alt="Screenshot 2025-04-01 at 4 03 44 PM" src="https://github.com/user-attachments/assets/d505950f-0b5f-4e31-8cd3-6c344cf999b1" />
+
+Local Cinemas Near You
+<img width="445" alt="Screenshot 2025-04-01 at 4 03 52 PM" src="https://github.com/user-attachments/assets/592792b2-968e-49c1-abea-a14b60dd7ae5" />
+
+Movies Show Dates Gantt Graph
+<img width="445" alt="Screenshot 2025-04-01 at 4 04 01 PM" src="https://github.com/user-attachments/assets/4fb43b87-03ce-4e7b-b804-2e3331f983d5" />
