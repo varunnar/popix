@@ -53,7 +53,7 @@
         "expo-font",
         {
           "fonts": [
-            "./assets/fonts/Inter-Black.otf"
+            "./assets/fonts/Proxima-Nova-Alt-Regular.otf"
           ]
         }
       ]
