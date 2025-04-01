@@ -4,7 +4,7 @@ import CinemaCard from "./components/cinemaCard";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSharedValue } from "react-native-reanimated";
 import { useNavigation } from "@react-navigation/native";
-import { useCinemaStore, useLocationStore } from "./store/index";
+import { useCinemaStore, useLocationStore } from "../store/index";
 
 import * as Location from 'expo-location';
 

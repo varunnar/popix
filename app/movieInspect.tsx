@@ -5,7 +5,7 @@ import MovieTimeBubble from "./components/movieTimeBubble";
 import { useRoute } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 import { Router } from "expo-router";
-import { useMovieStore } from "./store";
+import { useMovieStore } from "../store/index";
 //details/[id].tsx => /details/1 use something like this, the 1 is the localSearchParams
 
 export default function movieInspect() {

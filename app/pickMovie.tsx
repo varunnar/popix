@@ -3,7 +3,7 @@ import {useState, useEffect, useRef} from 'react';
 import MovieCard from "./components/movieCard";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { useLocationStore, useCinemaStore, useMovieStore } from "./store";
+import { useLocationStore, useCinemaStore, useMovieStore } from "../store/index";
 
 export default function PickMovie() {
 

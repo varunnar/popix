@@ -3,7 +3,7 @@ import { View, Dimensions, ScrollView, Text } from "react-native";
 import { useRoute, useNavigation} from "@react-navigation/native";
 import Svg, { Line, G, Text as SvgText, Rect, Image } from "react-native-svg";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useMovieStore } from "./store";
+import { useMovieStore } from "../store/index";
 import * as d3 from "d3";
 
 export default function MovieTimesVisualization() {

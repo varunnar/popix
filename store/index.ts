@@ -1,3 +1,4 @@
+/* eslint import/prefer-default-export: off */
 import {create} from "zustand";
 
 interface locationStore {
