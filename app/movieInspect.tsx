@@ -5,7 +5,7 @@ Overview: Displays movie details such as image, rating, picture and more. Collec
 */
 import React, { useEffect, useState } from "react";
 import { ImageBackground, ScrollView, TouchableOpacity } from "react-native";
-import {View, Text, inspectedMovieStylesheet, Dimensions} from "react-native";
+import {View, Text, StyleSheet, Dimensions} from "react-native";
 import MovieTimeBubble from "./components/movieTimeBubble";
 import { useNavigation } from "@react-navigation/native";
 import { useMovieStore } from "../store/index";
@@ -146,7 +146,7 @@ export default function movieInspect() {
     )
 }
 
-const inspectedMovieStyles = inspectedMovieStylesheet.create({
+const inspectedMovieStyles = StyleSheet.create({
     container: {
       backgroundColor: "#FFFFFF",
       width: "100%",
