@@ -59,14 +59,16 @@ At this point, I hit an issue. My code had previously been working, but the Movi
 Finally, after this point, in an effort to clean up code, and minimize bugs I researched and integrated in a Zustand Store, which held local variables safely. These were stored so I could pass them to components easily without having to worry about current routes and existing data on each page. Instead, I could save movie Ids and datasets, making the process more clean and seamless as I navigated between pages. 
 
 # A.I Usage
-While in general I avoided A.I. during this project, I do utilize it in key moments. 
+While in general, I avoided A.I. during this project, I do utilize it in key moments. 
 
 ## Model
-I mostly utilized ChatGBT specifically for bug fixes. In key instances where the work I did was niche, such as running into issues with the interactions between D3 and react-native. In general however, I opted for utilizes other sources such as documentation or other sources to understand potential bugs. 
+I mostly utilized ChatGBT specifically for bug fixes. In key instances where the work I did was niche, such as running into issues with the interactions between D3 and react-native. In general however, I opted for utilizing other sources such as documentation or other sources to understand potential bugs. 
 
 ## Prompts
 Below are the prompts I utilized
-**Original Prompt**: For this code (rendering code for D3) in D3 and react native I am getting the error view config getter callback for component "SVG" must be a function (received undefined) - I only get this on my mobile phone, not on web.
+
+### Prompt 1 - React Native and D3
+**Original Prompt**: For this code (rendering code for D3) in D3 and react native I am getting the error view config getter callback for component "SVG" must be a function (received undefined) - I only get this on my mobile phone, not on the web.
 
 
 **AI Response:**
@@ -93,14 +95,41 @@ Instead of using D3's .attr() method on the Svg component directly, you need to 
 <img width="300" alt="Screenshot 2025-04-01 at 5 02 08 PM" src="https://github.com/user-attachments/assets/912e00aa-a26e-43d0-8823-ac071e7efe3c" />
 
 **My Judgement**
-The code changes made sense but were pretty intensive. I used them as a reference a little bit, but in general I created my own solution. The majority of my changes included moving as much content as possible outside of the useEffect() loop which had held the most of it. I kept the scaling, ticks, and data formatting within this loop. After that, I explored SVG react-native and built the content out as individual elements, such as rects and SVGText which I investigated personally. I added the axis on my own as well. In general, A.I. had helped me learn that the integration would be less painful but I avoided using the code it provided in order to make the visualization my own and understand the pieces better. 
+The code changes made sense but were pretty intensive. I used them as a reference a little bit, but in general, I created my own solution. The majority of my changes included moving as much content as possible outside of the useEffect() loop which had held the most of it. I kept the scaling, ticks, and data formatting within this loop. After that, I explored SVG react-native and built the content out as individual elements, such as rects and SVGText which I investigated personally. I added the axis on my own as well. In general, A.I. had helped me learn that the integration would be less painful but I avoided using the code it provided in order to make the visualization my own and understand the pieces better. 
+
+### Prompt 2 - React Native transitioning
+**Original Prompt:** 
+I want my flatlist scrolls to jump to a card once you get close enough
+
+**Response:**
+_You can achieve this in React Native’s FlatList by detecting when the user scrolls near a specific item and then programmatically scrolling to that item using scrollToIndex. Here’s how you can do it:_
+
+_Steps:_
+_1. Use onScroll to track the current scroll position.
+2. Calculate proximity to the nearest target item.
+3. Use scrollToIndex when the user gets close enough._
+
+_Code Example_
+
+**My Judgement:**
+The content was interesting but my approach was slightly different. I did research on my own and found HandleScroll and HandleScrollMomentumEnd functions but did not fully understand them. I asked about this.
+
+**Follow-up Prompt:**
+Explain what handleScroll and handleMomentumScrollEnd do
+
+**Response**
+<img width="758" alt="image" src="https://github.com/user-attachments/assets/41a52075-93bc-4fd8-8f6b-8980c241e01f" />
+<img width="800" alt="image" src="https://github.com/user-attachments/assets/544c758b-3c1b-4b2a-9ed9-0fd58ad0f924" />
+
+**My Judgement:**
+This made sense to me, so I then took portions of the code they provided in the example, the documentation I had found online, and my environment to make a simple addition to the animation. I later found bugs in the code approach they had found to making the index in animation and fixed them indepedently. 
 
 ## My Approach with A.I.
-I believe A.I. in development is a powerful tool that should be used. However, I only believe it should be used if the code has the appropriate knowledge of the space to actually understand it, and the creativity and skill to not simply copy and paste. Otherwise, this process can lead to worse functionality, bugs that are harder to find and more.
+I believe AI in development is a powerful tool that should be used. However, I only believe it should be used if the code has the appropriate knowledge of the space to actually understand it, and the creativity and skill to not simply copy and paste. Otherwise, this process can lead to worse functionality, bugs that are harder to find, and more.
 
 In this project given that I was learning a new language, I avoided tools such as Copilot and forced myself to use prompts to understand my issue. Furthermore, I focused on bugs, in order to learn more, instead of asking for functionality. 
 
 ## What code is Mine V.S. AI?
-A majority of the code is mine, including the react native, D3, expo, zustand, and more. I utilized documentation and bug threads at all opportunities first, and even after that I never copied and pasted from A.I. and always wrote anything myself. The areas where I did take code help were in portions of the D3 visualization, as well as in the animations on the scrollbar, which had minor impacts.
+A majority of the code is mine, including React Native, D3, Expo, Zustand, and more. I utilized documentation and bug threads at all opportunities first, and even after that I never copied and pasted from A.I. and always wrote anything myself. The areas where I did take code help were in portions of the D3 visualization, as well as in the animations on the scrollbar, which had minor impacts.
 
 
